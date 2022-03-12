@@ -10,30 +10,25 @@ def parse_ingest_config(config_path):
 
 def get_batches(staging_path, ingest_config):
   batches = []
-  for root, _, files  in os.walk(staging_path, topdown=True):
+  root, _, files = next(os.walk(staging_path, topdown=True))
     
-    batch = []
-    for file in files:
-      print(file)
-      # Check file extension
-      extension = file.split(".")[-1]
-      if extension != ingest_config["file_extension"]:
-        continue
+  batch = []
+  for file in files:
+    # Check file extension
+    extension = file.split(".")[-1]
+    if extension != ingest_config["file_extension"]:
+      continue
 
-      file_path = Path(root).joinpath(file)
+    file_path = Path(root).joinpath(file)
 
-      # Check file size
-      file_size = file_path.stat().st_size
-      print(f"SIZE: {file_size}")
-      if file_size <= 1024*int(ingest_config["file_size_mb"]):
-        batch.append(file_path)
+    # Check file size
+    file_size = file_path.stat().st_size
+    if file_size <= 1024*int(ingest_config["file_size_mb"]):
+      batch.append(file_path)
 
-      if len(batch) >= int(ingest_config["file_num"]):
-        batches.append(batch)
-        batch = []
-
-    # Only scan root
-    break
+    if len(batch) >= int(ingest_config["file_num"]):
+      batches.append(batch)
+      batch = []
 
   # Final batch
   batches.append(batch)
