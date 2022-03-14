@@ -11,7 +11,10 @@ def print_tenant():
 
 
 def process_batch(batch_df):
-  return batch_df
+  # Filter non-purchase, non-helpful reviews
+  processed_df = batch_df[(batch_df["helpful_votes"] != 0) & (batch_df["verified_purchase"] == 'Y')]
+
+  return processed_df
 
 if __name__ == "__main__":
 
