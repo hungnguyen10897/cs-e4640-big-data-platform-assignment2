@@ -8,6 +8,12 @@ def parse_ingest_config(config_path):
   return dict(config.items('INGEST'))
 
 
+def parse_cassandra_config(config_path):
+  config = configparser.ConfigParser()
+  config.read(config_path)
+  return dict(config.items('CASSANDRA'))
+
+
 def get_batches(staging_path, ingest_config):
   batches = []
   root, _, files = next(os.walk(staging_path, topdown=True))
@@ -23,7 +29,7 @@ def get_batches(staging_path, ingest_config):
 
     # Check file size
     file_size = file_path.stat().st_size
-    if file_size <= 1024*int(ingest_config["file_size_mb"]):
+    if file_size <= 1024*1024*int(ingest_config["file_size_mb"]):
       batch.append(file_path)
 
     if len(batch) >= int(ingest_config["file_num"]):
