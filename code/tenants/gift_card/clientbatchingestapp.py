@@ -25,7 +25,8 @@ if __name__ == "__main__":
   ingest_config = parse_ingest_config(tenant_config_path)
   cassandra_config = parse_cassandra_config(tenant_config_path)
 
-  # session = get_cassandra_session(cassandra_config)
+  session = get_cassandra_session(cassandra_config)
+  session.execute("USE mysimbdp")
 
   batches = get_batches(tenant_staging_path, ingest_config)
 
@@ -35,6 +36,6 @@ if __name__ == "__main__":
 
     processed_batch_df = process_batch(batch_df)
 
-    # write_df_to_cassandra(session, processed_batch_df)
+    write_df_to_cassandra(session, processed_batch_df)
 
-  # session.close()
+  session.close()
