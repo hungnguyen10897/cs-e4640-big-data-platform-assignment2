@@ -37,7 +37,7 @@ class Tenant:
 
   def batch_ingest(self):
     session = get_cassandra_session(self.__cassandra_config__)
-    self.__logger__.info(f"Start Batch Ingestion for: {self.tenant_name} to Keyspace: {self.__cassandra_config__['keyspace']}")
+    self.__logger__.info(f"Start Batch Ingestion for Tenant: '{self.tenant_name}' to Keyspace: '{self.__cassandra_config__['keyspace']}'")
     session.execute(f"USE {self.__cassandra_config__['keyspace']}")
 
     batches = get_batches(self.__tenant_staging_path__, self.__ingest_config__)
@@ -52,4 +52,3 @@ class Tenant:
       write_df_to_cassandra(session, processed_batch_df)
 
       self.__logger__.info(f"\tBatch {i}: Ingested {processed_batch_df.shape[0]} rows, took {time.time() - start} seconds")
-      
