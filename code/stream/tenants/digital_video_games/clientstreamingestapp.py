@@ -1,4 +1,4 @@
-# Run from code/stream: python tenants/gift_card/clientstreamingestapp.py
+# Run from code/stream: python tenants/digital_video_games/clientstreamingestapp.py
 
 import json,sys
 from kafka import KafkaConsumer
@@ -7,7 +7,7 @@ from cassandra.cluster import Cluster
 from tenants.shared import REVIEWS_DTYPES, INSERT_STMT, parse_cassandra_config, parse_kafka_config
 
 
-TENANT = "gift_card"
+TENANT = "digital_video_games"
 
 
 def ingest_to_cassandra(record):

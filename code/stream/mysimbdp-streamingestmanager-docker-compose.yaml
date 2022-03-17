@@ -10,3 +10,12 @@ services:
       - ./tenants/:/app/tenants/
     network_mode: host
     command: python tenants/gift_card/clientstreamingestapp.py
+
+  digital_video_games:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./tenants/:/app/tenants/
+    network_mode: host
+    command: python tenants/digital_video_games/clientstreamingestapp.py
