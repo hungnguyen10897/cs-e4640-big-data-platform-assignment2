@@ -1,3 +1,14 @@
-# Assignment Assignment_NR  Your_STUDENTID
+# Assignment Assignment_2  1034884
 
-> Guide line: This is the file where you will explain the structure of your assignment delivery. Remember to replace **Assignment_NR** with the number of the assignment (e.g., 1, 2, 3, or 4) and **Your_STUDENTID** with your student number. Remove all guidelines from the template.
+## Data
+
+Data used for this assignment can be found here: [Amazon US Customer Reviews Dataset](https://www.kaggle.com/cynthiarempel/amazon-us-customer-reviews-dataset)
+
+## Services
+
+Beside services from Assignment 1, the services of this assignment are mainly run locally as Python processes and as container by docker-compose.
+
+### mysimdbp-coredms
+I use Cassandra for this component. Cassandra is deployed onto Kubernetes using K8ssandra, (K8ssandra installation guide)[https://docs.k8ssandra.io/install/local/]
+
+

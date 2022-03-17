@@ -15,7 +15,7 @@ and provide examples (e.g., JSON or YAML).
 
 We need such constraints for each tenant service profie to control the amount of data ingested to the platform from each tenant.
 We'll need to scale down one tenant's throughput if we have too many tenants in the platform. In the current platform, each tenant's 
-directory (e.g `code/tenants/gift_card`) contains `clientbatchingestapp.cfg` file which is the configurations file for the `clientingestapp`,
+directory (e.g `code/batch/tenants/gift_card`) contains `clientbatchingestapp.cfg` file which is the configurations file for the `clientingestapp`,
 sample:
 
 ```
@@ -40,7 +40,7 @@ Each tenant provides ingestion programs/pipelines, **clientbatchingestapp**, whi
 least one type of data wrangling. As a tenant, explain the design of **clientbatchingestapp** and provide one implementation.
 Note that **clientbatchingestapp** follows the guideline of **mysimbdp** given in the next Point 3.
 
-Each tenant will have its directory at `code/tenants/<TENANT_NAME>`, e.g `code/tenants/gift_card/`, the directory contains:
+Each tenant will have its directory at `code/batch/tenants/<TENANT_NAME>`, e.g `code/batch/tenants/gift_card/`, the directory contains:
 
 - `clientbatchingestapp.cfg`: configuration of the `clientbatchingestapp`
 - `clientbatchingestapp.py`: `clientbatchingestapp` ingestion program
@@ -57,10 +57,10 @@ model that **clientbatchingestapp** has to follow but **clientbatchingestapp** i
 Explain how **mysimbdp-batchingestmanager** decides/schedules the execution of **clientbatchingestapp** for tenants. 
 
 
-**mysimbdp-batchingestmanager** is located at `code/mysimbdp-batchingestmanager.py`, this program essentially registers tenants for batch ingestion.
-Registration of new tenant happens as follow: create new directory under `code/tenants` with new tenant's name, e.g: `code/tenants/toys`. In that directory,
+**mysimbdp-batchingestmanager** is located at `code/batch/mysimbdp-batchingestmanager.py`, this program essentially registers tenants for batch ingestion.
+Registration of new tenant happens as follow: create new directory under `code/batch/tenants` with new tenant's name, e.g: `code/batch/tenants/toys`. In that directory,
 give tenant's configuration in `clientbatchingestapp.cfg`, its data in `staging` and data wrangling function under `clientbatchingestapp.app`. Then in the file
-`code/mysimbdp-batchingestmanager.cfg`, add tenant's name into the list. After these 2 steps, the tenant is registered for batch ingestion. Under the hood,
+`code/batch/mysimbdp-batchingestmanager.cfg`, add tenant's name into the list. After these 2 steps, the tenant is registered for batch ingestion. Under the hood,
 create a `Tenant` object using the components defined in the tenant's directory. **mysimbdp-batchingestmanager** is then able to call the `Tenant` object's
 `batch_ingest` method to start the batch ingestion, it does this one tenant at a time until all of registered tenants have finished ingestion.
 
@@ -87,12 +87,12 @@ per second you can ingest in your tests?
 
 General tenant structure: In this platform, I assume that the tenants will mostly share the same data, the data is reviews data,
 each tenant will focus on a specific type of products, e.g gift cards, digital video games... Therefore, I decide the abstract the tenant
-into a generic class at `code/tenant.py`. This class dictates how tenants are supposed to read and use their configurations, do logging, 
+into a generic class at `code/batch/tenant.py`. This class dictates how tenants are supposed to read and use their configurations, do logging, 
 split staging data files into batches, read data and write data in batch. The main difference of tenants is in how they do data wrangling on
 the staging data. This data wrangling is defined as a function on a Pandas Dataframe of staging data (`def process_batch(batch_df)`), located in the module 
-`code/tenants/<TENANT>/clientbatchingingestapp.py` (e.g `code/tenants/gift_card/clientbatchingingestapp.py`). 
+`code/batch/tenants/<TENANT>/clientbatchingingestapp.py` (e.g `code/batch/tenants/gift_card/clientbatchingingestapp.py`). 
 
-To unregister a tenant, simply remove its name from `code/mysimbdp-batchingestmanager.cfg`, or its directory.
+To unregister a tenant, simply remove its name from `code/batch/mysimbdp-batchingestmanager.cfg`, or its directory.
 
 Performance statistics from Grafana
 ![](/reports/images/batch_performance.png)
@@ -116,7 +116,7 @@ Sample of tenant log:
 2022-03-15 17:36:57,371 - gift_card - INFO - 	Batch 0: Ingested 148310 rows, took 810.3277261257172 seconds
 ```
 
-Beside the tenants' logs, **mysimbdp-batchingestmanager** also produces logs available at `code/platform.log`, after execution of **mysimbdp-batchingestmanager**
+Beside the tenants' logs, **mysimbdp-batchingestmanager** also produces logs available at `code/batch/platform.log`, after execution of **mysimbdp-batchingestmanager**
 has started.
 
 Sample of platform log:

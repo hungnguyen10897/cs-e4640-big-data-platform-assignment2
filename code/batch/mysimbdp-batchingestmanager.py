@@ -1,4 +1,3 @@
-from operator import le
 import os, configparser, json, logging
 from tenant import Tenant
 
