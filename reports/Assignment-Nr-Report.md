@@ -1,7 +1,12 @@
 # This your assignment report
 
+<br>
+<br>
 
 ## Part 1 - Batch data ingestion
+
+<br>
+<br>
 
 1. The ingestion will be applied to files of data. Design a set of constraints for files that **mysimbdp** will support for ingestion.
 Design a set of constraints for the tenant service profile w.r.t. ingestion (e.g., maximum number of files and amount of data).
@@ -26,6 +31,8 @@ password=L8AqSx3E7kZofZ00Pash
 keyspace=mysimbdp
 ```
 
+<br>
+<br>
 
 2. Each tenant will put the tenant's data files to be ingested into a directory, **client-staging-input-directory** within **mysimbdp**.
 Each tenant provides ingestion programs/pipelines, **clientbatchingestapp**, which will take the tenant's files as input, in
@@ -41,6 +48,8 @@ Each tenant will have its directory at `code/tenants/<TENANT_NAME>`, e.g `code/t
 
 New coming tenants need to give only those 3 components.
 
+<br>
+<br>
 
 3. As the **mysimbdp** provider, design and implement a component **mysimbdp-batchingestmanager** that invokes tenant's
 **clientbatchingestapp** to perform the ingestion for available files in **client-staging-input-directory**. **mysimbdp** imposes the
@@ -65,6 +74,8 @@ tenants=[
   ]
 ```
 
+<br>
+<br>
 
 4. Explain your design for the multi-tenancy model in mysimbdp: which parts of mysimbdp will be shared for all tenants,
 which parts will be dedicated for individual tenants so that you as a platform provider can add and remove tenants based on
@@ -86,6 +97,8 @@ To unregister a tenant, simply remove its name from `code/mysimbdp-batchingestma
 Performance statistics from Grafana
 ![](/reports/images/batch_performance.png)
 
+<br>
+<br>
 
 5. Implement and provide logging features for capturing successful/failed ingestion as well as metrics about ingestion time,
 data size, etc., for files which have been ingested into **mysimbdp**. Logging information must be stored in separate files,
@@ -131,13 +144,15 @@ Sample of platform log:
 2022-03-15 17:36:57,797 - digital_video_games - INFO - Number of Batches: 1
 ```
 
-
-
-
+<br>
+<br>
 
 ## Part 2 - Near-realtime data ingestion
 
 All the code and configurations for this part is at `code/stream`.
+
+<br>
+<br>
 
 1. Tenants will put their data into messages and send the messages to a messaging system, **mysimbdp-messagingsystem**
 (provisioned by **mysimbdp**) and tenants will develop ingestion programs, **clientstreamingestapp**, which read data from the
@@ -160,6 +175,8 @@ Within this directory, there are:
 
 To remove a tenant, simply remove its directory from `code/stream/tenants`
 
+<br>
+<br>
 
 2. Design and implement a component **mysimbdp-streamingestmanager**, which can start and stop **clientstreamingestapp**
 instances on-demand. **mysimbdp** imposes the model that **clientstreamingestapp** has to follow so that **mysimbdpstreamingestmanager** 
@@ -168,7 +185,8 @@ can invoke **clientstreamingestapp** as a blackbox, explain the model.
 **mysimbdp-streamingestmanager** is implemented as a `docker-compose` file `code/stream/mysimbdp-streamingestmanager-docker-compose.yaml`. 
 Each tenant is created as a service. This service executes the **clientstreamingestapp** in the tenant's directory (mounted to the container).
 
-
+<br>
+<br>
 
 3. Develop test ingestion programs (**clientstreamingestapp**), test data, and test service profiles for tenants. Show the
 performance of ingestion tests, including failures and exceptions, for at least 2 different tenants in your test environment.
@@ -181,6 +199,8 @@ Performance statistics from Grafana
 
 Total number of rows: ~150 000 rows, max throughput 150 rows/sec
 
+<br>
+<br>
 
 4. **clientstreamingestapp** decides to report the its processing rate, including average ingestion time, total ingestion data size,
 and number of messages to **mysimbdp-streamingestmonitor** within a pre-defined period of time. Design the report format
@@ -200,6 +220,8 @@ Report sent from **clientstreamingestapp** can have a json format, to be analyze
 After every pre-defined period, the report is composed by **clientstreamingestapp** based on tracked statistics and sent to **mysimbdp-streamingestmonitor**
 via an exposed API.
 
+<br>
+<br>
 
 5. Implement a feature in **mysimbdp-streamingestmonitor** to receive the report from **clientstreamingestapp**. Based on the
 report from **clientstreamingestapp** and the tenant profile, when the performance is below a threshold, e.g., average
@@ -208,27 +230,59 @@ situation. Implementation a feature in **mysimbdp-streamingestmanager** to recei
 
 SKIPPED
 
+<br>
+<br>
+
 ## Part 3: Integration and Extension
+
+<br>
+<br>
 
 1. Produce an integrated architecture for the logging and monitoring of both batch and near-realtime ingestion features (Part 1,
 Point 5 and Part 2, Points 4-5) so that you as a platform provider could know the amount of data ingested and existing
 errors/performance for individual tenants.
 
+Logging is done for Batch Ingestion. The same thing can be done similarly for Stream Ingestion by introducing `logging` library for each tenant, 
+then logs neccesary statistics into log files at `code/stream/tenants/<TENANT>/clientstreamingestapp.cfg`. Monitoring can be enabled by sending
+performance logs and statistics to a monitoring platform.
 
-2. In the stream ingestion pipeline, assume that a tenant has to ingest the same data but to different sinks, e.g., mybdpcoredms for storage and a new mybdp-streamdataprocessing component, what features/solutions you can provide and
-recommend to your tenant?
+<br>
+<br>
 
+2. In the stream ingestion pipeline, assume that a tenant has to ingest the same data but to different sinks, e.g., **mybdpcoredms** for storage 
+and a new **mybdp-streamdataprocessing** component, what features/solutions you can provide and recommend to your tenant?
 
-3. The tenant wants to protect the data during the ingestion using some encryption mechanisms, e.g., clientbatchingestapp
-and clientstreamingestapp have to deal with encrypted data. Which features/solutions you recommend the tenants and
+Tenant can use asynchronous consumers API of Kafka
+
+<br>
+<br>
+
+3. The tenant wants to protect the data during the ingestion using some encryption mechanisms, e.g., **clientbatchingestapp**
+and **clientstreamingestapp** have to deal with encrypted data. Which features/solutions you recommend the tenants and
 which services you might support them for this goal?
 
+Tenant or we as a platform provider can expose a service to pseudonymize data (only sensitive column, e.g Personal ID,...), tenants
+can process their data through this service and ingest as normal. Once they need raw data they can pass the processed data stored in
+**mybdpcoredms** through an inverse of the service to get the raw unpseudonymized data. (This is how my team is doing at the moment)
+
+<br>
+<br>
 
 4. In the case of batch ingestion, we want to (i) detect the quality of data to allow ingestion only for data with a pre-defined
 quality of data condition and (ii) store metadata, including detected quality, into the platform, how you, as a platform provider,
 and your tenants can work together?
 
+A platform provider can implement filter function for **mybdpcoredms**, which filters in-coming data and only stores valid data. At the same time,
+create a metadata store, which specifies the conditions and filters used. As for tenants, they can be instructed about how to implement the filter
+and conditions to be met from their ingest app. This reduces the amount of data sent to the server saving network traffic.
 
-5. If a tenant has multiple clientbatchingestapp and clientstreamingestapp, each is suitable for a type of data and has
+<br>
+<br>
+
+5. If a tenant has multiple **clientbatchingestapp** and **clientstreamingestapp**, each is suitable for a type of data and has
 different workloads (e.g., different CPUs, memory consumption and execution time), how would you extend your design and
 implementation in Parts 1 & 2 (only explain the concept/design) to support this requirement?
+
+Currently, this should be quite straightforward in Part 2 since the tenant are separate, it's also called and executed on separate container.
+About workloads, the docker-compose services can be separated into Kubernetes Deployment to satisfy different needs. For part 1, there is a shared
+interface between tenants. To enable varying needs, simply remove the shared interface, and put each tenant app into a separate program.
