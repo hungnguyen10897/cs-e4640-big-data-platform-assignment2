@@ -1,5 +1,12 @@
 # This is a deployment/installation guide
 
+Prerequisites:
+
+
+
+
+Part 1 - Batch Ingest
+
 ```
 minikube start \
 -p mysimbdp \

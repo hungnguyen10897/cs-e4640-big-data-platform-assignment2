@@ -84,7 +84,7 @@ the staging data. This data wrangling is defined as a function on a Pandas Dataf
 To unregister a tenant, simply remove its name from `code/mysimbdp-batchingestmanager.cfg`, or its directory.
 
 Performance statistics from Grafana
-![](/reports/images/performance.png)
+![](/reports/images/batch_performance.png)
 
 
 5. Implement and provide logging features for capturing successful/failed ingestion as well as metrics about ingestion time,
@@ -130,3 +130,105 @@ Sample of platform log:
 2022-03-15 17:36:57,789 - digital_video_games - INFO - Start Batch Ingestion for: digital_video_games to Keyspace: mysimbdp
 2022-03-15 17:36:57,797 - digital_video_games - INFO - Number of Batches: 1
 ```
+
+
+
+
+
+## Part 2 - Near-realtime data ingestion
+
+All the code and configurations for this part is at `code/stream`.
+
+1. Tenants will put their data into messages and send the messages to a messaging system, **mysimbdp-messagingsystem**
+(provisioned by **mysimbdp**) and tenants will develop ingestion programs, **clientstreamingestapp**, which read data from the
+messaging system and ingest the data into **mysimbdp-coredms**. For near-realtime ingestion, explain your design for the
+multi-tenancy model in **mysimbdp**: which parts of the **mysimbdp** will be shared for all tenants, which parts will be dedicated
+for individual tenants so that **mysimbdp** can add and remove tenants based on the principle of pay-per-use. Design and
+explain a set of constraints for the tenant service profile w.r.t. data ingestion.
+
+
+First of all, **mysimbdp-messagingsystem**, which is a Kafka cluster, is deployed by `docker-compose` and defined in `code/stream/kafka-docker-compose.yml`.
+After the Kafka cluster is up, the script `code/stream/producer.py` can be executed to send messages to Kafka's Topic. The producer randomly sends messages
+of either `gift_card` or `digital_video_games` tenant, the topic to be sent to depends on the tenant. The producer reads tsv data from `code/stream/data/` and
+sends 1 row of tsv as a message at a time. The design is such that each tenant has its own topic in Kafka, e.g `gift_card` tenant has a `gift_card` topic.
+
+Second, each tenant will have its own stream ingestion program **clientstreamingestapp** located at `code/stream/tenants/<TENANT>`, e.g `code/stream/tenants/gift_card`.
+Within this directory, there are:
+
+- clientstreamingestapp.py          # the ingestion program **clientstreamingestapp**
+- clientstreamingestapp.cfg         # Configuration files for **clientstreamingestapp**
+
+To remove a tenant, simply remove its directory from `code/stream/tenants`
+
+
+2. Design and implement a component **mysimbdp-streamingestmanager**, which can start and stop **clientstreamingestapp**
+instances on-demand. **mysimbdp** imposes the model that **clientstreamingestapp** has to follow so that **mysimbdpstreamingestmanager** 
+can invoke **clientstreamingestapp** as a blackbox, explain the model.
+
+**mysimbdp-streamingestmanager** is implemented as a `docker-compose` file `code/stream/mysimbdp-streamingestmanager-docker-compose.yaml`. 
+Each tenant is created as a service. This service executes the **clientstreamingestapp** in the tenant's directory (mounted to the container).
+
+
+
+3. Develop test ingestion programs (**clientstreamingestapp**), test data, and test service profiles for tenants. Show the
+performance of ingestion tests, including failures and exceptions, for at least 2 different tenants in your test environment.
+What is the maximum throughput of the ingestion in your tests?
+
+For 2 tenants:
+
+Performance statistics from Grafana
+![](/reports/images/stream_performance.png)
+
+Total number of rows: ~150 000 rows, max throughput 150 rows/sec
+
+
+4. **clientstreamingestapp** decides to report the its processing rate, including average ingestion time, total ingestion data size,
+and number of messages to **mysimbdp-streamingestmonitor** within a pre-defined period of time. Design the report format
+and explain possible components, flows and the mechanism for reporting.
+
+Report sent from **clientstreamingestapp** can have a json format, to be analyzed and visualized by **mysimbdp-streamingestmonitor**.
+```
+{
+  "tenant" : "gift_card",                 # tenant of the **clientstreamingestapp**
+  "timestamp" : "2022-03-17 00:00:00,     # timestamp when the report is sent
+  "duration" : 600,                       # number of seconds since started
+  "average_speed" : 200,                  # average rows per second ingested
+  "rows": 120000                          # number of rows ingested so far
+}
+```
+
+After every pre-defined period, the report is composed by **clientstreamingestapp** based on tracked statistics and sent to **mysimbdp-streamingestmonitor**
+via an exposed API.
+
+
+5. Implement a feature in **mysimbdp-streamingestmonitor** to receive the report from **clientstreamingestapp**. Based on the
+report from **clientstreamingestapp** and the tenant profile, when the performance is below a threshold, e.g., average
+ingestion time is too low, **mysimbdp-streamingestmonitor** decides to inform **mysimbdp-streamingestmanager** about the
+situation. Implementation a feature in **mysimbdp-streamingestmanager** to receive information informed by mysimbdpstreamingestmonitor.
+
+SKIPPED
+
+## Part 3: Integration and Extension
+
+1. Produce an integrated architecture for the logging and monitoring of both batch and near-realtime ingestion features (Part 1,
+Point 5 and Part 2, Points 4-5) so that you as a platform provider could know the amount of data ingested and existing
+errors/performance for individual tenants.
+
+
+2. In the stream ingestion pipeline, assume that a tenant has to ingest the same data but to different sinks, e.g., mybdpcoredms for storage and a new mybdp-streamdataprocessing component, what features/solutions you can provide and
+recommend to your tenant?
+
+
+3. The tenant wants to protect the data during the ingestion using some encryption mechanisms, e.g., clientbatchingestapp
+and clientstreamingestapp have to deal with encrypted data. Which features/solutions you recommend the tenants and
+which services you might support them for this goal?
+
+
+4. In the case of batch ingestion, we want to (i) detect the quality of data to allow ingestion only for data with a pre-defined
+quality of data condition and (ii) store metadata, including detected quality, into the platform, how you, as a platform provider,
+and your tenants can work together?
+
+
+5. If a tenant has multiple clientbatchingestapp and clientstreamingestapp, each is suitable for a type of data and has
+different workloads (e.g., different CPUs, memory consumption and execution time), how would you extend your design and
+implementation in Parts 1 & 2 (only explain the concept/design) to support this requirement?

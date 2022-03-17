@@ -54,7 +54,7 @@ def send_message(parsed_dict, producer):
 
 if __name__ == "__main__":
 
-  MESSAGE_SPEED = 1 # sec/msg
+  MESSAGE_SPEED = 0 # sec/msg
   producer = KafkaProducer(bootstrap_servers='localhost:29092')
 
   data_dir = Path("./data")
@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
     time.sleep(MESSAGE_SPEED)
 
-    #
-    i = input("Continue?")
-    print("\n")
-    if i != "": break
+    # #
+    # i = input("Continue?")
+    # print("\n")
+    # if i != "": break
