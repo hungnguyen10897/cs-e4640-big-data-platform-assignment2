@@ -1,0 +1,95 @@
+commit 7b9cf1c64ae5dc3956ab7299cbf2c21844edafef
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Thu Mar 17 16:46:03 2022 +0200
+
+    Finish all reports and necessary files
+
+commit 4b7e9e49be32f10db744b734a943a843a56247ea
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Thu Mar 17 16:17:30 2022 +0200
+
+    Finish Report
+
+commit 5cf724cd887754c6a5f59eac1d615440fdc850d6
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Thu Mar 17 15:48:01 2022 +0200
+
+    Finish Part 2 report
+
+commit 99c3df91bfbe78e8f0ad6cb6a7eca83df25ae893
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Thu Mar 17 06:23:01 2022 +0200
+
+    Add new tenant to stream ingest app
+
+commit f54ab91767523b904348a2150afee3b985511ff6
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Thu Mar 17 05:40:02 2022 +0200
+
+    Implement tenant consumer as container, strreamingestmanager as docker-compose
+
+commit 68204e1245f0b78a9829f1e8a33107ec68f34bc9
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Thu Mar 17 04:08:23 2022 +0200
+
+    Draft streaming part, kafka cluster, basic producer and consumer
+
+commit 605b393ce93db6fce3d7820c4ab810dedae732c8
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Wed Mar 16 04:17:33 2022 +0200
+
+    Finish part1 report
+
+commit fe4b7b1dd1d76d902d95aef6163c1a15c97b6e76
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Tue Mar 15 06:25:51 2022 +0200
+
+    Restructure tenants registration, implement logging
+
+commit 395db958f9813c85ebdebcc933ac5138569dbbe9
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Tue Mar 15 06:25:42 2022 +0200
+
+    Restructure tenants registration, implement logging
+
+commit a0e189be27a50b530749283639e1244745d0a2a7
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Tue Mar 15 04:16:49 2022 +0200
+
+    Implement batch ingestion
+
+commit 62aefb0f6452694d5a0bfd0ca615bc80a1ae6181
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Mon Mar 14 05:40:52 2022 +0200
+
+    Add Data Wrangling for 2 tenants
+
+commit 4dfb7e8c1c5fd7154f2acb4684546b4ac99395bb
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Mon Mar 14 04:58:13 2022 +0200
+
+    Implement batching and prepare batch for ingestion
+
+commit 8a23bb32f2cab5cf706224ca323808e21a009844
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Sat Mar 12 05:57:47 2022 +0200
+
+    New tenant, Draft batchingestmanager
+
+commit 310439f85398a7988acd406ef0b764674a9c34cc
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Sat Mar 12 05:26:52 2022 +0200
+
+    Draft tenant ingest apps and general structure
+
+commit 4e3d3be3b3830828b2d1df7f2e8e4743df178b52
+Author: Hung Nguyen <hungnguyen10897@gmail.com>
+Date:   Fri Mar 11 12:22:28 2022 +0200
+
+    Initial commit, setup from template
+
+commit f9e2975d1953c09a3e640d2df2df96c5fe80f6df
+Author: Nguyen Quoc Hung <hungnguyen10897@gmail.com>
+Date:   Fri Mar 11 12:06:12 2022 +0200
+
+    Initial commit
