@@ -22,7 +22,7 @@ file_extension=tsv                # File extension to include in batch
 [CASSANDRA]                       # Cassandra related configs
 host=localhost
 username=k8ssandra-superuser
-password=ISD2EBjwOjM19Xa3pNNx
+password=L8AqSx3E7kZofZ00Pash
 keyspace=mysimbdp
 ```
 

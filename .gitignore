@@ -132,3 +132,4 @@ dmypy.json
 **/staging/**
 
 .vscode
+**kafka_2.13-3.1.0**
