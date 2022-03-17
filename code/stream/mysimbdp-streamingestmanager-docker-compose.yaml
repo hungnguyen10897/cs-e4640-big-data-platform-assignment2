@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+
+  gift_card:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./tenants/:/app/tenants/
+    network_mode: host
+    command: python tenants/gift_card/clientstreamingestapp.py
